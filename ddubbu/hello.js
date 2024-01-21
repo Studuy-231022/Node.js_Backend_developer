@@ -17,14 +17,17 @@ const getNotFound = (req, res) => {
   res.end("404 page not found");
 };
 
+const urlMap = {
+  "/user": getUser,
+  "/hello": getHello,
+};
+
 const server = http.createServer((req, res) => {
   const path = url.parse(req.url, false).pathname;
   res.setHeader("Content-Type", "text/html; charset=utf-8");
 
-  if (path === "/user") {
-    getUser(req, res);
-  } else if (path === "/hello") {
-    getHello(req, res);
+  if (path in urlMap) {
+    urlMap[path](req, res);
   } else {
     getNotFound(req, res);
   }
