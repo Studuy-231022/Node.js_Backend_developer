@@ -1,14 +1,33 @@
 const http = require("http");
+const url = require("url");
 
-let count = 0;
+const getUser = (req, res) => {
+  const userInfo = url.parse(req.url, true).query;
+  const userName = userInfo.name || "none";
+  const userAge = userInfo.age || "none";
+  res.end(`[user] name: ${userName}, age: ${userAge}`);
+};
+
+const getHello = (req, res) => {
+  res.end(`<h1>Hello World! 안녕하세요!</h1>`);
+};
+
+const getNotFound = (req, res) => {
+  res.statusCode = 404;
+  res.end("404 page not found");
+};
 
 const server = http.createServer((req, res) => {
-  console.log(count++);
+  const path = url.parse(req.url, false).pathname;
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
 
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "text/plain");
-  res.write("hello\n");
-  res.end("node.js\n");
+  if (path === "/user") {
+    getUser(req, res);
+  } else if (path === "/hello") {
+    getHello(req, res);
+  } else {
+    getNotFound(req, res);
+  }
 });
 
 server.listen(8000, () => {
